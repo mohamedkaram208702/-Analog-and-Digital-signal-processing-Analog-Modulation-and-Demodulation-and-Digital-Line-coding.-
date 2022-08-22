@@ -1,0 +1,17 @@
+function x = Manchestertimedomain( bits , t , n )
+x = zeros(1,length(t));
+for i = 0:length(bits)-1
+ if bits(i+1) == 1 %amplitude of function x in time domain = 2
+ x(i*n+1:(i+0.5)*n) = 1;
+ x((i+0.5)*n+1:(i+1)*n) = -1;
+ else
+ x(i*n+1:(i+0.5)*n) = -1;
+ x((i+0.5)*n+1:(i+1)*n) = 1;
+ end
+end
+figure (1);
+plot(t, x , 'Linewidth', 1.5);
+title('Manchester line code in time domain');
+xlim([0 20]);
+ylim([-2 2]);
+end
