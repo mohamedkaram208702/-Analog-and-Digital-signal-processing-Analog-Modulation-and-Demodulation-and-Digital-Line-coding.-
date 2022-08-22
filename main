@@ -1,0 +1,35 @@
+Ts = 1/10;
+t = -50:Ts:50-Ts;
+fs = 1/Ts;
+x = 2*tripuls(t,4);
+figure(1)
+plot(t, x, 'b','linewidth',2);
+title({'';'Triangular Pulse in Time Domain'});
+xlim ([-5,5]);
+ylim ([0,2.5]);
+xlabel('Time (Seconds)')
+ylabel('Magnitude')
+y = fft(x);
+n = length(x);
+fshift = (-n/2:n/2-1)*(fs/n);
+yshift = fftshift(y);
+figure(2)
+plot(fshift,0.1*abs(yshift),'r','linewidth',5)
+Freq_response = abs(yshift);
+hold on
+syms m;
+fplot(4*(sin(2*pi*m)/(2*pi*m))^2,'black','linewidth',1)
+ylim ([-0.5,4.5]);
+xlabel('Frequency (Hz)')
+ylabel('Magnitude')
+title('Triangular Pulse in Frequency Domain');
+legend('FT Using Sampling','Analytical FT')
+figure(3)
+power_spectrum = ((0.1*abs(yshift)).^2/n);
+for i = 1:length(power_spectrum)
+ if 0.045 * max(power_spectrum)<= power_spectrum(i)& power_spectrum(i)
+<= 0.055 * max(power_spectrum) & fshift(i)>0
+ BW = fshift(i);
+ y = (power_spectrum(i));
+ end
+end
