@@ -1,0 +1,102 @@
+bits = randi([0 1],1,100);
+phi = input('please enter the phase shift in the detector ');
+bitrate = 1;
+n = 1000;
+T = length(bits)/bitrate;
+N = n*length(bits);
+dt = T/N;
+t = 0:dt:T;
+UP_Time = UPNRZ_TimeDomain(bits,t,n);
+UPNRZ_Spectrum(UP_Time,n);
+UP_Time_DSB_SC = UPNRZ_ASK_TransmitterModulation(UP_Time,t);
+UPNRZ_ASK_TransmitterSpectrum(UP_Time_DSB_SC,n);
+UP_Time_Dem_NoFilter = ASK_Dem_NoFilter(UP_Time_DSB_SC,t,phi);
+ASK_Dem_NoFilter_Spectrum(UP_Time_Dem_NoFilter,n);
+UP_Time_Dem_AfterFilter = 
+ASK_Received_WithFilter(UP_Time_Dem_NoFilter,t,n);
+ASK_Received_WithFilter_Spectrum(UP_Time_Dem_AfterFilter,n);
+function x = UPNRZ_TimeDomain(bits,t,n)
+x = zeros(1,length(t));
+for i = 0:length(bits)-1
+ if bits(i+1) == 1 
+ x(i*n+1:(i+1)*n) = 1; 
+ else
+ x(i*n+1:(i+1)*n) =0; 
+ end
+end
+figure (1);
+plot(t, x , 'Linewidth', 1.5);
+title('UPNRZ In Time Domain');
+xlim([0 10]);
+ylim([-0.5 1.5]);
+end
+function UPNRZ_Spectrum(x,n)
+v = length(x)*100 ;
+Mf = (fftshift(fft(x,v)));
+mag_Mf = abs(Mf) / length(x) ;
+f = -n/2 : n/v : n/2-n/v ;
+figure(2);
+plot( f , mag_Mf ,'b','Linewidth',1.5 );
+title('UPNRZ In Frequency Domain');
+xlim([-100 100]);
+end
+function DSB_SC = UPNRZ_ASK_TransmitterModulation(x,t)
+ct = cos(2 * pi * 100 * t );
+DSB_SC = x .* ct;
+figure (3);
+plot( t , DSB_SC,'Linewidth',1.5);
+xlim([0 10]);
+ylim([-2 2]);
+title('UPNRZ DSB-SC in Time Domain "Transmitter"');
+end
+function UPNRZ_ASK_TransmitterSpectrum(DSB_SC,n)
+v = length(DSB_SC)*100 ;
+Sf_DSB_SC = (fftshift(fft(DSB_SC,v)));
+mag_Sf_DSB_SC = abs(Sf_DSB_SC) / length(DSB_SC) ; 
+f = -n/2 : n/v : n/2-n/v ;
+figure (4);
+plot( f , mag_Sf_DSB_SC,'Linewidth',1.5 );
+title('UPNRZ DSB-SC in Frequency Domain "Transmitter"');
+end
+function s_dem = ASK_Dem_NoFilter(x,t,phi)
+at = cos(2 * pi * 100 * t + phi );
+s_dem= x .* at; % Demodulated Signal
+figure(5);
+plot(t,s_dem,'b');
+xlim([0 10]);
+title('ASK Demodulated Signal In Time Domain Before Filtration');
+ylim([-2 2]);
+end
+function ASK_Dem_NoFilter_Spectrum(s_dem,n)
+v = length(s_dem)*100 ;
+L= length(s_dem);
+f= -n/2:n/v:(n/2)-(n/v);
+X = fftshift(fft(s_dem,v));
+mag = abs(X);
+figure(6);
+plot(f,mag/L, 'Linewidth',1.5);
+xlabel('Frequency');
+ylabel('Demodulated Signal Before Filtration');
+title('Spectrum Of Demodulated Signal Before Filtration');
+end
+function median = ASK_Received_WithFilter(s_dem,t,n)
+Filteredsignal=lowpass(s_dem,50,n);
+median = medfilt1(Filteredsignal,100);
+figure(7);
+plot(t,median,'b', 'Linewidth',1.5);
+xlim([0 10]);
+ylim([-0.5 1]);
+title('Time Domain Of Demodulated Signal After Filtration');
+end
+function ASK_Received_WithFilter_Spectrum(Filteredsignal,n)
+v = length(Filteredsignal)*100 ;
+L= length(Filteredsignal);
+f= -n/2:n/v:(n/2)-(n/v);
+X = fftshift(fft(Filteredsignal,v));
+mag = abs(X);
+figure(8);
+plot(f,mag/L,'b', 'Linewidth',1.5);
+title('Spectrum Of Demodulated Signal After Filtration');
+xlim([-100 100]);
+ylim([0 0.3]);
+end
