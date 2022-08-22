@@ -1,0 +1,15 @@
+function x = PNRZ_TimeDomain( bits , t , n)
+x = zeros(1,length(t));
+for i = 0:length(bits)-1
+ if bits(i+1) == 1
+ x(i*n+1:(i+1)*n) = 2;
+ else
+ x(i*n+1:(i+1)*n) = -2;
+ end
+end
+figure (4);
+plot(t, x, 'Linewidth', 1.5);
+title('Polar non return to zero in time domain');
+xlim([0 20]);
+ylim([-3 3]);
+end
