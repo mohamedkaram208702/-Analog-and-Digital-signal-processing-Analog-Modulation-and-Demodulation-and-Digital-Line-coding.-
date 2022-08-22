@@ -1,0 +1,11 @@
+function ManchesterFirstPulseSpectrum(x,n)
+k = x(1:1000);
+v = length(k)*100;
+kf = (fftshift(fft(k,v)));
+mag_kf = abs(kf) / length(k) ;
+f = -n/2 : n/v : n/2-n/v ;
+figure(3);
+plot( f , mag_kf ,'b','Linewidth',1.5 );
+title('Manchester line code in frequency domain for the first pulse');
+xlim([-5 5]);
+end
