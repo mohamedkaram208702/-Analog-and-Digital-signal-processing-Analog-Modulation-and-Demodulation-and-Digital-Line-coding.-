@@ -1,0 +1,13 @@
+bits = randi([0 1],1,100);
+bitrate = 1;
+n = 1000;
+T = length(bits)/bitrate;
+N = n*length(bits);
+dt = T/N;
+t = 0:dt:T;
+ManTime = Manchestertimedomain(bits,t,n);
+ManchesterPulsesSpectrum(ManTime,n);
+ManchesterFirstPulseSpectrum(ManTime,n);
+PNRZ_time = PNRZ_TimeDomain(bits,t,n);
+PNRZ_PulsesSpectrum(PNRZ_time,n);
+PNRZ_FirstPulseSpectrum(PNRZ_time,n);
