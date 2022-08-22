@@ -1,0 +1,11 @@
+function PNRZ_FirstPulseSpectrum(x,n)
+k = x(1:1000);
+v = length(k)*100;
+xf = (fftshift(fft(k,v)));
+mag_xf = abs(xf) / length(k) ;
+f = -n/2 : n/v : n/2-n/v ;
+figure(6);
+plot( f , mag_xf ,'b','Linewidth',1.5 );
+title('PNRZ line code in frequency domain for the first pulse');
+xlim([-5 5]);
+end
